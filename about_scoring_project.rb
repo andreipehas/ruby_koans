@@ -29,8 +29,32 @@ require File.expand_path(File.dirname(__FILE__) + '/neo')
 #
 # Your goal is to write the score method.
 
+def _score(dice, current_score)
+  if dice.nil? || dice == []
+    current_score
+    # we have 3 identical dice
+  elsif dice.length >= 3 && dice[0] ==dice[1] && dice[1] == dice[2]
+    # special case if the triples is 1s
+    if dice[0] == 1
+      _score(dice[3, 5], current_score + 1000)
+    else
+      _score(dice[3, 5], current_score + 100 * dice[0])
+    end
+  # not enough identical dice
+  elsif dice[0] == 1
+    _score(dice[1, 5], current_score + 100)
+  elsif dice[0] == 5
+    _score(dice[1, 5], current_score + 50)
+  else
+    _score(dice[1, 5], current_score)
+  end
+end
+
 def score(dice)
-  # You need to write this method
+  raise ArgumentError unless !dice.nil? && dice.is_a?(Array)
+
+  dice.sort!
+  _score(dice[0, 5], 0)
 end
 
 class AboutScoringProject < Neo::Koan
